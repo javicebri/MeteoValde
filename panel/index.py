@@ -2,6 +2,7 @@ import panel as pn
 import param
 from threading import Thread
 import time
+from path_io import get_path_dict, load_data
 
 from Temperature import Temperature
 from Humidity import Humidity
@@ -71,7 +72,12 @@ def show_messages(messages):
 #
 #     return fastlisttemplate("Show Streaming Value",stream.param.value,)
 
-temperature = Temperature()
+root = "C:\\Users\\jc_ce\\Desktop\\01Proyectos\\Meteoclimatic\\MeteoValde"
+path_dict = get_path_dict(root)
+
+df_input, df_input_trend, df_input_res, excel_compare_dict, excel_predict_dict, excel_stats_dict = load_data(path_dict)
+
+temperature = Temperature(path_dict, df_input, excel_stats_dict)
 humidity = Humidity()
 # pressure = Pressure()
 # precipitation = Precipitation()
