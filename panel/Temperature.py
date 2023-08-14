@@ -18,11 +18,22 @@ pn.extension('tabulator', css_files=[pn.io.resources.CSS_URLS['font-awesome']])
 hv.extension('bokeh')
 
 class Temperature:
-    def __init__(self, path_dict, df_input, excel_stats_dict):
+    def __init__(self, path_dict, df_input, excel_stats_dict, df_input_res, df_input_trend):
         self.df = df_input.copy()
         self.excel_stats_dict = excel_stats_dict
 
         self.df.index = pd.to_datetime(self.df.index)
+
+        self.df_input_res = df_input_res.copy()
+
+        self.df_input_trend = df_input_trend.copy()
+
+        self.logo_temperature = pn.panel('C:\\Users\\jc_ce\\Desktop\\01Proyectos\\Meteoclimatic\\MeteoValde\\resources\\termometro.png', height=50)
+
+        self.create_panel(path_dict)
+
+
+
     def contains_filter(df, lower, upper, column, df_ref):
         df_ref_filtered = df_ref[(df_ref.index >= lower) & (df_ref.index <= upper)]
         df.loc['Media td1 mínima rel. (Rango sel.)', 'Temperatura [ºC]'] = df_ref_filtered['T. med1.'].min()
@@ -43,7 +54,9 @@ class Temperature:
         df.loc['Max. amplitud rel. (Rango sel.)', 'Fecha'] = df_ref_filtered['T. Amp.'].idxmax()
 
         return df
-    def show_panel(self):
+    def create_panel(self, path_dict):
+        blank = pn.panel('')
+
         date_subrange_temp = pn.widgets.DateRangeSlider(name='Date',
                                                         start=self.df.index[0],
                                                         end=self.df.index[-1])
@@ -86,9 +99,9 @@ class Temperature:
         df_stats_rel_temp = df_stats_rel_temp.set_index('Estadísticas')
         df_out_table_rel_temp = pn.widgets.Tabulator(df_stats_rel_temp, layout='fit_data_table')
 
-        df_out_table_rel_temp.add_filter(pn.bind(self.contains_filter, lower=date_subrange_temp.param.value_start,
-                                                 upper=date_subrange_temp.param.value_end, column='T. Min.',
-                                                 df_ref=self.df))
+        # df_out_table_rel_temp.add_filter(pn.bind(self.contains_filter, lower=date_subrange_temp.param.value_start,
+        #                                          upper=date_subrange_temp.param.value_end, column='T. Min.',
+        #                                          df_ref=self.df))
 
         self.excel_stats_dict['stats_temp'] = self.excel_stats_dict['stats_temp'].set_index('Estadísticas')
         self.excel_stats_dict['stats_temp']['Fecha'] = self.excel_stats_dict['stats_temp']['Fecha'].dt.strftime('%Y-%m-%d')
@@ -96,9 +109,9 @@ class Temperature:
         df_out_table_abs_temp = pn.widgets.Tabulator(self.excel_stats_dict['stats_temp'], layout='fit_data_table')
 
         ### TEMPERATURA TABLA RESUMEN Y HEATMAP
-        df_input_med1_temp = pd.read_excel(input_stats_name, sheet_name='T. med1. mes', index_col=[0])
-        df_input_max_temp = pd.read_excel(input_stats_name, sheet_name='T. Max. mes', index_col=[0])
-        df_input_min_temp = pd.read_excel(input_stats_name, sheet_name='T. Min. mes', index_col=[0])
+        df_input_med1_temp = pd.read_excel(path_dict["input_stats"], sheet_name='T. med1. mes', index_col=[0])
+        df_input_max_temp = pd.read_excel(path_dict["input_stats"], sheet_name='T. Max. mes', index_col=[0])
+        df_input_min_temp = pd.read_excel(path_dict["input_stats"], sheet_name='T. Min. mes', index_col=[0])
         temperature_table_med1_text = pn.panel('### Temperatura media td1 media por mes [ºC]')
         temperature_table_max_text = pn.panel('### Temperatura máxima media por mes [ºC]')
         temperature_table_min_text = pn.panel('### Temperatura mínima media por mes [ºC]')
@@ -146,30 +159,30 @@ class Temperature:
 
         ### TENDENCIA DE LA MÁXIMA
         temperature_trend_max_text = pn.panel(
-            '**Tendencia de las temperaturas máximas**' + ' y=' + str(df_input_res.loc['T. Max.', 'Intercept'])[
-                                                                  :6] + '+' + str(df_input_res.loc['T. Max.', 'Slope'])[
+            '**Tendencia de las temperaturas máximas**' + ' y=' + str(self.df_input_res.loc['T. Max.', 'Intercept'])[
+                                                                  :6] + '+' + str(self.df_input_res.loc['T. Max.', 'Slope'])[
                                                                               :6] + 'x')
-        temperature_max_reg = df_input_trend.hvplot(y=['T. Max.', 'Regresión T. Max.'], kind='line',
+        temperature_max_reg = self.df_input_trend.hvplot(y=['T. Max.', 'Regresión T. Max.'], kind='line',
                                                     ylabel='Temperatura [ºC]', xlabel='Fecha',
                                                     title='Tendencia de las temperaturas máximas',
                                                     color=['#fa4134', 'b']).opts(xrotation=45)
 
         ### TENDENCIA DE LA MÍNIMA
         temperature_trend_min_text = pn.panel(
-            '**Tendencia de las temperaturas mínimas**' + ' y=' + str(df_input_res.loc['T. Min.', 'Intercept'])[
-                                                                  :6] + '+' + str(df_input_res.loc['T. Min.', 'Slope'])[
+            '**Tendencia de las temperaturas mínimas**' + ' y=' + str(self.df_input_res.loc['T. Min.', 'Intercept'])[
+                                                                  :6] + '+' + str(self.df_input_res.loc['T. Min.', 'Slope'])[
                                                                               :6] + 'x')
-        temperature_min_reg = df_input_trend.hvplot(y=['T. Min.', 'Regresión T. Min.'], kind='line',
+        temperature_min_reg = self.df_input_trend.hvplot(y=['T. Min.', 'Regresión T. Min.'], kind='line',
                                                     ylabel='Temperatura [ºC]', xlabel='Fecha',
                                                     title='Tendencia de las temperaturas mínimas',
                                                     color=['#3480fa', 'r']).opts(xrotation=45)
 
         ### TENDENCIA DE LA MEDIA TD1
         temperature_trend_med1_text = pn.panel(
-            '**Tendencia de la temperatura media Td_1**' + ' y=' + str(df_input_res.loc['T. med1.', 'Intercept'])[
+            '**Tendencia de la temperatura media Td_1**' + ' y=' + str(self.df_input_res.loc['T. med1.', 'Intercept'])[
                                                                    :6] + '+' + str(
-                df_input_res.loc['T. med1.', 'Slope'])[:6] + 'x')
-        temperature_med1_reg = df_input_trend.hvplot(y=['T. med1.', 'Regresión T. med1.'], kind='line',
+                self.df_input_res.loc['T. med1.', 'Slope'])[:6] + 'x')
+        temperature_med1_reg = self.df_input_trend.hvplot(y=['T. med1.', 'Regresión T. med1.'], kind='line',
                                                      ylabel='Temperatura [ºC]', xlabel='Fecha',
                                                      title='Tendencia de la temperatura media Td_1',
                                                      color=['y', 'g']).opts(xrotation=45)
@@ -188,7 +201,9 @@ class Temperature:
                                       )
 
         accordion_temperature = pn.Accordion(('Temperaturas', block_temperature))
-        temperature_row = pn.Row(logo_thermometer, accordion_temperature)
+        temperature_row = pn.Row(self.logo_temperature, accordion_temperature)
+
+        self.panel = pn.Column(temperature_row)
 
 
         # self.latitud_box = pn.widgets.FloatInput(value=0, step=0.001, name="Latitud")
@@ -196,9 +211,9 @@ class Temperature:
         # self.boton = pn.widgets.Button(name="Mostrar en mapa")
         # self.mapa = pn.pane.HTML()
 
-        self.boton.on_click(self.mostrar_en_mapa)
+        # self.boton.on_click(self.mostrar_en_mapa)
 
-        self.panel = pn.Column(self.latitud_box, self.longitud_box, self.boton, self.mapa)
+        # self.panel = pn.Column(self.latitud_box, self.longitud_box, self.boton, self.mapa)
 
 
 

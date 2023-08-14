@@ -77,7 +77,7 @@ path_dict = get_path_dict(root)
 
 df_input, df_input_trend, df_input_res, excel_compare_dict, excel_predict_dict, excel_stats_dict = load_data(path_dict)
 
-temperature = Temperature(path_dict, df_input, excel_stats_dict)
+temperature = Temperature(path_dict, df_input, excel_stats_dict, df_input_res, df_input_trend)
 humidity = Humidity()
 # pressure = Pressure()
 # precipitation = Precipitation()
