@@ -21,20 +21,12 @@ class Temperature:
     def __init__(self, path_dict, df_input, excel_stats_dict, df_input_res, df_input_trend):
         self.df = df_input.copy()
         self.excel_stats_dict = excel_stats_dict
-
         self.df.index = pd.to_datetime(self.df.index)
-
         self.df_input_res = df_input_res.copy()
-
         self.df_input_trend = df_input_trend.copy()
-
-        self.logo_temperature = pn.panel('C:\\Users\\jc_ce\\Desktop\\01Proyectos\\Meteoclimatic\\MeteoValde\\resources\\termometro.png', height=50)
-
         self.create_panel(path_dict)
 
-
-
-    def contains_filter(df, lower, upper, column, df_ref):
+    def contains_filter(self, df, lower, upper, column, df_ref):
         df_ref_filtered = df_ref[(df_ref.index >= lower) & (df_ref.index <= upper)]
         df.loc['Media td1 mínima rel. (Rango sel.)', 'Temperatura [ºC]'] = df_ref_filtered['T. med1.'].min()
         df.loc['Media td1 mínima rel. (Rango sel.)', 'Fecha'] = df_ref_filtered['T. med1.'].idxmin()
@@ -99,9 +91,10 @@ class Temperature:
         df_stats_rel_temp = df_stats_rel_temp.set_index('Estadísticas')
         df_out_table_rel_temp = pn.widgets.Tabulator(df_stats_rel_temp, layout='fit_data_table')
 
-        # df_out_table_rel_temp.add_filter(pn.bind(self.contains_filter, lower=date_subrange_temp.param.value_start,
-        #                                          upper=date_subrange_temp.param.value_end, column='T. Min.',
-        #                                          df_ref=self.df))
+        df_out_table_rel_temp.add_filter(pn.bind(self.contains_filter, lower=date_subrange_temp.param.value_start,
+                                                 upper=date_subrange_temp.param.value_end, column='T. Min.',
+                                                 df_ref=self.df))
+
 
         self.excel_stats_dict['stats_temp'] = self.excel_stats_dict['stats_temp'].set_index('Estadísticas')
         self.excel_stats_dict['stats_temp']['Fecha'] = self.excel_stats_dict['stats_temp']['Fecha'].dt.strftime('%Y-%m-%d')
@@ -125,7 +118,7 @@ class Temperature:
         points = [(df_input_med1_temp.columns.tolist()[i], df_input_med1_temp.index.tolist()[j],
                    df_input_med1_temp.iloc[j, i]) for i in range(12) for j in range(10)]
         heatmap_med1_temp = hv.HeatMap(points)
-        (heatmap_med1_temp).opts(
+        heatmap_med1_temp.opts(
             opts.HeatMap(toolbar='above', tools=['hover']),
             opts.Points(tools=['hover'], size=dim('z') * 0.3)).opts(colorbar=True, xlabel='Mes', ylabel='Año',
                                                                     width=500, height=400)
@@ -135,8 +128,9 @@ class Temperature:
         points = [
             (df_input_max_temp.columns.tolist()[i], df_input_max_temp.index.tolist()[j], df_input_max_temp.iloc[j, i])
             for i in range(12) for j in range(10)]
+
         heatmap_max_temp = hv.HeatMap(points)
-        (heatmap_max_temp).opts(
+        heatmap_max_temp.opts(
             opts.HeatMap(toolbar='above', tools=['hover']),
             opts.Points(tools=['hover'], size=dim('z') * 0.3)).opts(colorbar=True, xlabel='Mes', ylabel='Año',
                                                                     width=500, height=400)
@@ -146,7 +140,7 @@ class Temperature:
             (df_input_min_temp.columns.tolist()[i], df_input_min_temp.index.tolist()[j], df_input_min_temp.iloc[j, i])
             for i in range(12) for j in range(10)]
         heatmap_min_temp = hv.HeatMap(points)
-        (heatmap_min_temp).opts(
+        heatmap_min_temp.opts(
             opts.HeatMap(toolbar='above', tools=['hover']),
             opts.Points(tools=['hover'], size=dim('z') * 0.3)).opts(colorbar=True, xlabel='Mes', ylabel='Año',
                                                                     width=500, height=400)
@@ -200,10 +194,10 @@ class Temperature:
                                       temperature_trend_min_text, temperature_min_reg
                                       )
 
-        accordion_temperature = pn.Accordion(('Temperaturas', block_temperature))
-        temperature_row = pn.Row(self.logo_temperature, accordion_temperature)
+        # accordion_temperature = pn.Accordion(('Temperaturas', block_temperature))
+        # temperature_row = pn.Row(self.logo_temperature, accordion_temperature)
 
-        self.panel = pn.Column(temperature_row)
+        self.panel = pn.Column(block_temperature)
 
 
         # self.latitud_box = pn.widgets.FloatInput(value=0, step=0.001, name="Latitud")
