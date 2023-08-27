@@ -17,4 +17,22 @@ unit_dict = {
     'Precipitación': '[l/m2]'
 }
 
+input_variable_groups = {
+    'Temperature': ['date', 'T. Max.', 'T. Min.', 'T. med1.', 'T. Amp.'],
+    'Humidity': ['date', 'H. Max.', 'H. Min.', 'H. med1.', 'H. Amp.'],
+    'Pressure': ['date', 'P. Max.', 'P. Min.', 'P. med1.', 'P. Amp.'],
+    'Wind': ['date', 'Vel.'],
+    'Precipitation': ['date', 'Precipitación']
+}
+
+trend_variable_groups = {
+    'Temperature': ['date', 'T. Max.', 'T. Min.', 'T. med1.', 'T. Amp.',
+                    'Regresión T. Max.', 'Regresión T. Min.',
+                    'Regresión T. med1.', 'Regresión T. Amp.'],
+    'Humidity': ['date', 'H. Max.', 'H. Min.', 'H. med1.', 'H. Amp.'],
+    'Pressure': ['date', 'P. Max.', 'P. Min.', 'P. med1.', 'P. Amp.'],
+    'Wind': ['date', 'Vel.'],
+    'Precipitation': ['date', 'Precipitación', 'Cuenta_lluvia', 'Cuenta_sequía']
+}
+
 logo_temperature = 'termometro.png'

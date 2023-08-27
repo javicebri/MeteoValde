@@ -75,9 +75,12 @@ def show_messages(messages):
 root = "C:\\Users\\jc_ce\\Desktop\\01Proyectos\\Meteoclimatic\\MeteoValde"
 path_dict = get_path_dict(root)
 
-df_input, df_input_trend, df_input_res, excel_compare_dict, excel_predict_dict, excel_stats_dict = load_data(path_dict)
+df_input_dict, df_input_trend_dict, df_input_res,\
+    excel_compare_dict, excel_predict_dict, excel_stats_dict = load_data(path_dict)
 
-temperature = Temperature(path_dict, df_input, excel_stats_dict, df_input_res, df_input_trend)
+temperature = Temperature(path_dict, df_input_dict['Temperature'], excel_stats_dict,
+                          df_input_res, df_input_trend_dict['Temperature'])
+
 humidity = Humidity()
 # pressure = Pressure()
 # precipitation = Precipitation()
@@ -88,14 +91,73 @@ humidity = Humidity()
 # distribution = Distribution()
 
 
+# ROUTES = {
+#     "temperatura": temperature.show(),
+#     "humedad": humidity.show(),
+#     # "presion": pressure.show(),
+#     # "precipitacion": precipitation.show(),
+#     # "viento": wind.show(),
+#     # "prediccion": prediction.show(),
+#     # "records": records.show(),
+#     # "distribucion": distribution.show()
+# }
+# pn.serve(ROUTES, port=5010, autoreload=True)
+
+
+
+# Definir las funciones que muestran los contenidos de temperatura y humedad
+def show_temperature():
+    return pn.pane.Markdown("Contenido de temperatura")
+
+def show_humidity():
+    return pn.pane.Markdown("Contenido de humedad")
+
+# Crear enlaces con iconos y texto usando HTML
+# temperature_link = '<a href="/temperatura" style="display: flex; align-items: center;"><img src="C:\\Users\\jc_ce\\Desktop\\01Proyectos\\Meteoclimatic\\MeteoValde\\resources\\termometro.png" alt="Temperatura" style="margin-right: 100px;">Temperatura</a>'
+# humidity_link = '<a href="/humedad" style="display: flex; align-items: center;"><img src="icons/humidity.png" alt="Humedad" style="margin-right: 10px;">Humedad</a>'
+# temperature_link = f'<a href="/temperatura" style="display: flex; align-items: center;"><img src="data:image/png;base64,C:\\Users\\jc_ce\\Desktop\\01Proyectos\\Meteoclimatic\\MeteoValde\\resources\\termometro.png" alt="Temperatura" style="margin-right: 10px;">Temperatura</a>'
+
+
+# # Crear paneles de imágenes para los enlaces
+# temperature_link = pn.pane.Image("C:/Users/jc_ce/Desktop/01Proyectos/Meteoclimatic/MeteoValde/resources/termometro.png", width=100, height=100)
+# humidity_link = pn.pane.Image("C:/Users/jc_ce/Desktop/01Proyectos/Meteoclimatic/MeteoValde/resources/termometro.png", width=100, height=100)
+#
+# temperature_link = pn.widgets.Link(name="Enlace con ícono", icon="C:/Users/jc_ce/Desktop/01Proyectos/Meteoclimatic/MeteoValde/resources/termometro.png", url="https://www.ejemplo.com")
+# humidity_link = pn.widgets.Link(name="Enlace con imagen", image="C:/Users/jc_ce/Desktop/01Proyectos/Meteoclimatic/MeteoValde/resources/termometro.png", url="https://www.ejemplo.com")
+
+
+# # Crear un panel con Markdown y HTML para agregar enlaces con iconos e imágenes
+# html = """
+# <h1>Ejemplo de enlaces personalizados</h1>
+#
+# <a href="https://www.ejemplo.com">Enlace con ícono <i class="fa fa-check"></i></a>
+# <br>
+# <a href="https://www.ejemplo.com">Enlace con imagen <img src="https://www.ejemplo.com/imagen.jpg" alt="Imagen"></a>
+# """
+#
+# # Crear un widget Markdown
+# temperature_link = pn.pane.HTML(html)
+# humidity_link = pn.pane.HTML(html)
+
+
+logo_temperature = pn.panel('C:\\Users\\jc_ce\\Desktop\\01Proyectos\\Meteoclimatic\\MeteoValde\\resources\\termometro.png', height=50)
+
+# Crear el diccionario de rutas con enlaces personalizados
 ROUTES = {
-    "temperatura": temperature.show(),
-    "humedad": humidity.show(),
-    # "presion": pressure.show(),
-    # "precipitacion": precipitation.show(),
-    # "viento": wind.show(),
-    # "prediccion": prediction.show(),
-    # "records": records.show(),
-    # "distribucion": distribution.show()
+    "Temperatura": temperature.show(),
+    "Humedad": humidity.show(),
 }
+
 pn.serve(ROUTES, port=5010, autoreload=True)
+# # Crear un panel con los enlaces
+# links_panel = pn.Column(
+#     pn.pane.Markdown("# Panel de Enlaces"),
+#     pn.panel(temperature_link, width=300),
+#     pn.panel(humidity_link, width=300)
+# )
+
+# Combinar el panel de enlaces y el panel de rutas en una disposición
+# app_layout = pn.Row(links_panel, pn.serve(ROUTES, port=5010, autoreload=True))
+
+# Mostrar la aplicación completa
+# app_layout.servable()

@@ -12,6 +12,17 @@ def get_path_dict(root =os.sep):
                  "input_predict": os.path.join(os.sep, root, 'data', GLOBAL_VARS.input_predict_name)}
 
     return paht_dict
+
+def filter_df_by_variable(df, variable_group_dict):
+
+    out_dict = {}
+    for key, value in variable_group_dict.items():
+        out_dict[key] = df[value]
+
+    return out_dict
+
+
+
 def load_data(paht_dict):
 
     df_input = pd.read_csv(paht_dict["input_main"], sep=';', index_col=[0])
@@ -26,7 +37,12 @@ def load_data(paht_dict):
     excel_predict_dict = pd.read_excel(paht_dict["input_predict"], sheet_name=None, index_col=None)
     excel_stats_dict = pd.read_excel(paht_dict["input_stats"], sheet_name=None, index_col=None)
 
-    return df_input, df_input_trend, df_input_res, excel_compare_dict, excel_predict_dict, excel_stats_dict
+    df_input_dict = filter_df_by_variable(df_input, GLOBAL_VARS.input_variable_groups)
+    df_trend_dict = filter_df_by_variable(df_input_trend, GLOBAL_VARS.trend_variable_groups)
+
+    # df_input_res_dict = df_input_res.to_dict()
+
+    return df_input_dict, df_trend_dict, df_input_res, excel_compare_dict, excel_predict_dict, excel_stats_dict
 
     def unique(lista):
         unique_list = []
