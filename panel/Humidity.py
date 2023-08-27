@@ -79,6 +79,10 @@ class Humidity:
         ### HUMEDAD TABLA RESUMEN
         df_input_max_hum = self.excel_stats_dict['H. Max. mes']
         df_input_min_hum = self.excel_stats_dict['H. Min. mes']
+
+        df_input_max_hum = df_input_max_hum.set_index(df_input_max_hum.columns[0])
+        df_input_min_hum = df_input_min_hum.set_index(df_input_min_hum.columns[0])
+
         hum_table_max_text = pn.panel('### Humedad máxima media por mes [%]')
         hum_table_min_text = pn.panel('### Humedad mínima media por mes [%]')
         df_table_max_hum = pn.widgets.Tabulator(df_input_max_hum, width=800, selection=[df_input_max_hum.shape[0] - 1])

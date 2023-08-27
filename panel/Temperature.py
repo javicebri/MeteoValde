@@ -101,9 +101,14 @@ class Temperature:
         df_out_table_abs_temp = pn.widgets.Tabulator(self.excel_stats_dict['stats_temp'], layout='fit_data_table')
 
         ### TEMPERATURA TABLA RESUMEN Y HEATMAP
-        df_input_med1_temp = pd.read_excel(path_dict["input_stats"], sheet_name='T. med1. mes', index_col=[0])
-        df_input_max_temp = pd.read_excel(path_dict["input_stats"], sheet_name='T. Max. mes', index_col=[0])
-        df_input_min_temp = pd.read_excel(path_dict["input_stats"], sheet_name='T. Min. mes', index_col=[0])
+        df_input_med1_temp = self.excel_stats_dict['T. med1. mes']
+        df_input_max_temp = self.excel_stats_dict['T. Max. mes']
+        df_input_min_temp = self.excel_stats_dict['T. Min. mes']
+
+        df_input_med1_temp = df_input_med1_temp.set_index(df_input_med1_temp.columns[0])
+        df_input_max_temp = df_input_max_temp.set_index(df_input_max_temp.columns[0])
+        df_input_min_temp = df_input_min_temp.set_index(df_input_min_temp.columns[0])
+
         temperature_table_med1_text = pn.panel('### Temperatura media td1 media por mes [ºC]')
         temperature_table_max_text = pn.panel('### Temperatura máxima media por mes [ºC]')
         temperature_table_min_text = pn.panel('### Temperatura mínima media por mes [ºC]')

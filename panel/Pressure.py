@@ -66,6 +66,9 @@ class Pressure:
         df_input_max_press = self.excel_stats_dict['P. Max. mes']
         df_input_min_press = self.excel_stats_dict['P. Min. mes']
 
+        df_input_max_press = df_input_max_press.set_index(df_input_max_press.columns[0])
+        df_input_min_press = df_input_min_press.set_index(df_input_min_press.columns[0])
+
         press_table_max_text = pn.panel('### Presión máxima media por mes [hPa]')
         press_table_min_text = pn.panel('### Presión mínima media por mes [hPa]')
         df_table_max_press = pn.widgets.Tabulator(df_input_max_press, width=800,

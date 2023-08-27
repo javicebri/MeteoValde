@@ -8,6 +8,8 @@ from path_io import get_path_dict, load_data
 from Temperature import Temperature
 from Pressure import Pressure
 from Humidity import Humidity
+from Precipitation import Precipitation
+
 
 pn.extension(sizing_mode="stretch_width")
 
@@ -53,7 +55,11 @@ pressure = Pressure(path_dict,
                     df_input_res,
                     df_input_trend_dict['Pressure'])
 
-# precipitation = Precipitation()
+precipitation = Precipitation(path_dict,
+                    df_input_dict['Precipitation'],
+                    excel_stats_dict,
+                    df_input_res,
+                    df_input_trend_dict['Precipitation'])
 # wind = Wind()
 # records = Records()
 # prediction = Prediction()
@@ -74,6 +80,7 @@ ROUTES = {
     "Temperatura": temperature.show(),
     "Presion": pressure.show(),
     "Humedad": humidity.show(),
+    "Precipitacion": precipitation.show()
 }
 
 pn.serve(ROUTES, port=5010, autoreload=True)
